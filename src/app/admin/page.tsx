@@ -20,15 +20,6 @@ const Page: React.FC = () => {
             /admin/posts/new
           </Link>
         </li>
-        <li>
-          <FontAwesomeIcon icon={faArrowRight} className="mr-2" />
-          <Link
-            className="text-blue-500 underline"
-            href="/admin/categories/new"
-          >
-            /admin/categories/new
-          </Link>
-        </li>
       </ul>
     </main>
   );

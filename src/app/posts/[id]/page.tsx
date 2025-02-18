@@ -45,7 +45,6 @@ const Page: React.FC = () => {
           },
           createdAt: postApiResponse.createdAt,
           updateAt: postApiResponse.updateAt,
-          button: postApiResponse.button,
         });
       } catch (e) {
         setFetchError(

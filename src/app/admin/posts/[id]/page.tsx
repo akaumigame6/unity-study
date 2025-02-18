@@ -1,14 +1,31 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/app/_hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
 
-// 投稿記事の新規作成のページ
+// 投稿記事をフェッチしたときのレスポンスのデータ型
+type PostApiResponse = {
+  id: string;
+  title: string;
+  synopsis: string;
+  content: string;
+  coverImageURL: string;
+  createdAt: string;
+};
+
+// 投稿記事のカテゴリ選択用のデータ型
+type SelectableCategory = {
+  id: string;
+  name: string;
+  isSelect: boolean;
+};
+
+// 投稿記事の編集ページ
 const Page: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fetchErrorMsg, setFetchErrorMsg] = useState<string | null>(null);
 
@@ -17,22 +34,72 @@ const Page: React.FC = () => {
   const [newContent, setNewContent] = useState("");
   const [newCoverImageURL, setNewCoverImageURL] = useState("");
 
-  const router = useRouter();
+  const { id } = useParams() as { id: string };
   const { token } = useAuth();
+  const router = useRouter();
+
+  // 編集前の投稿記事のデータ (State)
+  const [rawApiPostResponse, setRawApiPostResponse] =
+    useState<PostApiResponse | null>(null);
+
+  // 投稿記事の取得
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const requestUrl = `/api/posts/${id}`;
+        const res = await fetch(requestUrl, {
+          method: "GET",
+          cache: "no-store",
+        });
+        if (!res.ok) {
+          setRawApiPostResponse(null);
+          throw new Error(`${res.status}: ${res.statusText}`);
+        }
+        const apiResBody = (await res.json()) as PostApiResponse;
+        setRawApiPostResponse(apiResBody);
+      } catch (error) {
+        const errorMsg =
+          error instanceof Error
+            ? `投稿記事の取得に失敗しました: ${error.message}`
+            : `予期せぬエラーが発生しました ${error}`;
+        console.error(errorMsg);
+        setFetchErrorMsg(errorMsg);
+      }
+    };
+
+    fetchPost();
+  }, [id]);
+
+  // 投稿記事のデータが取得できたらカテゴリの選択状態を更新する
+  useEffect(() => {
+    // 初期化済みなら戻る
+    if (isInitialized) return;
+
+    // 投稿記事 または カテゴリ一覧 が取得できていないなら戻る
+    if (!rawApiPostResponse) return;
+
+    // 投稿記事のタイトル、本文、カバーイメージURLを更新
+    setNewTitle(rawApiPostResponse.title);
+    setNewSynposis(rawApiPostResponse.synopsis);
+    setNewContent(rawApiPostResponse.content);
+    setNewCoverImageURL(rawApiPostResponse.coverImageURL);
+
+    setIsInitialized(true);
+  }, [isInitialized, rawApiPostResponse]);
 
   const updateNewTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     // ここにタイトルのバリデーション処理を追加する
     setNewTitle(e.target.value);
   };
 
-  const updateNewContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    // ここに本文のバリデーション処理を追加する
-    setNewContent(e.target.value);
-  };
-
   const updateNewSynposis = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     // ここにあらすじのバリデーション処理を追加する
     setNewSynposis(e.target.value);
+  };
+
+  const updateNewContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    // ここに本文のバリデーション処理を追加する
+    setNewContent(e.target.value);
   };
 
   const updateNewCoverImageURL = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +113,7 @@ const Page: React.FC = () => {
 
     setIsSubmitting(true);
 
-    // ▼▼ 追加 ウェブAPI (/api/admin/posts) にPOSTリクエストを送信する処理
+    // ▼▼ 追加 ウェブAPI (/api/admin/posts/[id]) にPUTリクエストを送信する処理
     try {
       if (!token) {
         window.alert("予期せぬ動作：トークンが取得できません。");
@@ -58,10 +125,10 @@ const Page: React.FC = () => {
         content: newContent,
         coverImageURL: newCoverImageURL,
       };
-      const requestUrl = "/api/admin/posts";
+      const requestUrl = `/api/admin/posts/${id}`;
       console.log(`${requestUrl} => ${JSON.stringify(requestBody, null, 2)}`);
       const res = await fetch(requestUrl, {
-        method: "POST",
+        method: "PUT",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
@@ -74,9 +141,9 @@ const Page: React.FC = () => {
         throw new Error(`${res.status}: ${res.statusText}`); // -> catch節に移動
       }
 
-      const postResponse = await res.json();
+      // トップページに遷移
       setIsSubmitting(false);
-      router.push(`/posts/${postResponse.id}`); // 投稿記事の詳細ページに移動
+      router.push("/");
     } catch (error) {
       const errorMsg =
         error instanceof Error
@@ -88,7 +155,11 @@ const Page: React.FC = () => {
     }
   };
 
-  if (isLoading) {
+  if (fetchErrorMsg) {
+    return <div className="text-red-500">{fetchErrorMsg}</div>;
+  }
+
+  if (!isInitialized) {
     return (
       <div className="text-gray-500">
         <FontAwesomeIcon icon={faSpinner} className="mr-1 animate-spin" />
@@ -99,7 +170,7 @@ const Page: React.FC = () => {
 
   return (
     <main>
-      <div className="mb-4 text-2xl font-bold">投稿記事の新規作成</div>
+      <div className="mb-4 text-2xl font-bold">投稿記事の編集・削除</div>
 
       {isSubmitting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -140,10 +211,10 @@ const Page: React.FC = () => {
           <textarea
             id="content"
             name="content"
-            className="h-16 w-full rounded-md border-2 px-2 py-1"
+            className="h-48 w-full rounded-md border-2 px-2 py-1"
             value={newSynposis}
             onChange={updateNewSynposis}
-            placeholder="あらすじを記入してください"
+            placeholder="本文を記入してください"
             required
           />
         </div>
@@ -179,7 +250,7 @@ const Page: React.FC = () => {
           />
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end space-x-2">
           <button
             type="submit"
             className={twMerge(
@@ -189,7 +260,18 @@ const Page: React.FC = () => {
             )}
             disabled={isSubmitting}
           >
-            記事を投稿
+            記事を更新
+          </button>
+
+          <button
+            type="button"
+            className={twMerge(
+              "rounded-md px-5 py-1 font-bold",
+              "bg-red-500 text-white hover:bg-red-600"
+            )}
+            // onClick={handleDelete}
+          >
+            削除
           </button>
         </div>
       </form>

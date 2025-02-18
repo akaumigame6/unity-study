@@ -3,8 +3,17 @@ import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faGamepad, faUser } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { supabase } from "@/utils/supabase";
+import { useAuth } from "@/app/_hooks/useAuth";
+import { useRouter } from "next/navigation"; // ◀ 追加
 
 const Header: React.FC = () => {
+  const router = useRouter();
+  const { isLoading, session } = useAuth();
+  const logout = async () => {
+    await supabase.auth.signOut();
+    router.replace("/");
+  };
   return (
     <header>
       <div className="bg-slate-800 py-2">
@@ -29,10 +38,13 @@ const Header: React.FC = () => {
               </Link>
             </div>
             <div>
-              <Link href="/user">
-                <FontAwesomeIcon icon={faUser} className="mr-1" />
-                User
-              </Link>
+              <FontAwesomeIcon icon={faUser} className="mr-1" />
+              {!isLoading &&
+                (session ? (
+                  <Link href="/user">User</Link>
+                ) : (
+                  <Link href="/login">Login</Link>
+                ))}
             </div>
           </div>
         </div>

@@ -7,6 +7,5 @@ export type Post = {
   content: string;
   createdAt: string;
   updateAt: string;
-  button: boolean;
   coverImage: CoverImage;
 };

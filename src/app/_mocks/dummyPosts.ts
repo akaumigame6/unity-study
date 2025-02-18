@@ -5,7 +5,6 @@ const dummyPosts: Post[] = [
     id: "1d4cbd35-6ec2-4f34-b3e7-4a9b35a60d1a",
     createdAt: "2024-10-26T22:48:30.156Z",
     updateAt: "2024-10-26T22:48:30.156Z",
-    button: false,
     title: "投稿3",
     synopsis: "playerに弾を撃たせよう",
     content:
@@ -20,7 +19,6 @@ const dummyPosts: Post[] = [
     id: "24f932b8-231b-429b-b9dc-569f07ba16a7",
     createdAt: "2024-10-24T22:37:17.367Z",
     updateAt: "2024-10-24T22:37:17.367Z",
-    button: false,
     title: "投稿2",
     synopsis: "playerを矢印キーで動かせるようにしよう",
     content:
@@ -35,7 +33,6 @@ const dummyPosts: Post[] = [
     id: "36b7c693-4cce-4d73-afa3-acb54a404290",
     createdAt: "2024-10-22T11:22:34.684Z",
     updateAt: "2024-10-22T11:22:34.684Z",
-    button: false,
     title: "投稿1",
     synopsis: "playerを設置してみよう",
     content:

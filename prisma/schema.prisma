@@ -10,8 +10,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // 投稿記事テーブル
@@ -23,5 +24,19 @@ model Post {
   coverImageURL  String
   createdAt      DateTime @default(now())
   updateAt       DateTime @updatedAt
-  button         Boolean
+}
+
+model User {
+  id String @id @default(uuid())
+  name String
+  password String
+  button Button[]
+}
+
+model Button {
+  id String @id @default(uuid())
+  postId String
+  userId String
+  push Boolean
+  user User @relation(fields: [userId], references: [id])
 }

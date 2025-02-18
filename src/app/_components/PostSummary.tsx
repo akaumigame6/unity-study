@@ -1,5 +1,6 @@
 "use client";
 import type { Post } from "@/app/_types/Post";
+import type { Button } from "@/app/_types/Button";
 import dayjs from "dayjs";
 import { twMerge } from "tailwind-merge";
 import DOMPurify from "isomorphic-dompurify";
@@ -9,10 +10,11 @@ import Link from "next/link";
 
 type Props = {
   post: Post;
+  button: Button;
 };
 
 const PostSummary: React.FC<Props> = (props) => {
-  const { post } = props;
+  const { post, button } = props;
   const dtFmt = "YYYY-MM-DD HH:mm";
   const safeHTML = DOMPurify.sanitize(post.content, {
     ALLOWED_TAGS: ["b", "strong", "i", "em", "u", "br"],
@@ -27,7 +29,7 @@ const PostSummary: React.FC<Props> = (props) => {
           {dayjs(post.createdAt).format(dtFmt)}
         </div>
         <div className="flex space-x-1.5">
-          {post.button ? (
+          {button.push ? (
             <div
               className={twMerge(
                 "rounded-md px-2 py-0.5",

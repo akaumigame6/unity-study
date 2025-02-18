@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
-import { Post } from "@prisma/client";
+import { Button } from "@prisma/client";
 import { supabase } from "@/utils/supabase";
 
 type RouteParams = {
@@ -10,12 +10,10 @@ type RouteParams = {
 };
 
 type RequestBody = {
-  title: string;
-  synopsis: string;
-  content: string;
-  coverImageURL: string;
-  button: boolean;
+  push: boolean;
 };
+
+export const revalidate = 0; // ◀ サーバサイドのキャッシュを無効化する設定
 
 export const GET = async (req: NextRequest, routeParams: RouteParams) => {
   try {
@@ -24,28 +22,23 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
 
     // findUnique は id に一致する「1件」のレコードを取得するメソッド
     // もし条件に一致するレコードが存在しないときは null が戻り値となる
-    const post = await prisma.post.findUnique({
+    const button = await prisma.button.findUnique({
       where: { id },
       select: {
         id: true,
-        title: true,
-        synopsis: true,
-        content: true,
-        coverImageURL: true,
-        createdAt: true,
-        updateAt: true,
+        push: true,
       },
     });
 
     // 投稿記事が存在しないときの ( post が null のときの) 処理
-    if (!post) {
+    if (!button) {
       return NextResponse.json(
-        { error: `id='${id}'の投稿記事は見つかりませんでした` },
+        { error: `id='${id}'の学習記録は見つかりませんでした` },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(post);
+    return NextResponse.json(button);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -56,33 +49,22 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
 };
 
 export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
-  const token = req.headers.get("Authorization") ?? "";
-  const { data, error } = await supabase.auth.getUser(token);
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 401 });
   try {
-    const token = req.headers.get("Authorization") ?? "";
-    const { data, error } = await supabase.auth.getUser(token);
-    if (error)
-      return NextResponse.json({ error: error.message }, { status: 401 });
     const id = routeParams.params.id;
     const requestBody: RequestBody = await req.json();
 
     // 分割代入
-    const { title, synopsis, content, coverImageURL, button } = requestBody;
+    const { push } = requestBody;
 
     // 投稿記事テーブルにレコードを追加
-    const post: Post = await prisma.post.update({
+    const button: Button = await prisma.button.update({
       where: { id },
       data: {
-        title, // title: title の省略形であることに注意。以下も同様
-        synopsis,
-        content,
-        coverImageURL,
+        push,
       },
     });
 
-    return NextResponse.json(post);
+    return NextResponse.json(button);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -100,10 +82,10 @@ export const DELETE = async (req: NextRequest, routeParams: RouteParams) => {
     return NextResponse.json({ error: error.message }, { status: 401 });
   try {
     const id = routeParams.params.id;
-    const post: Post = await prisma.post.delete({
+    const button: Button = await prisma.button.delete({
       where: { id },
     });
-    return NextResponse.json({ msg: `「${post.title}」を削除しました。` });
+    return NextResponse.json({ msg: `「${button.id}」を削除しました。` });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
