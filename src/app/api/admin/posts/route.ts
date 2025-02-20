@@ -8,7 +8,7 @@ type RequestBody = {
   synopsis: string;
   content: string;
   coverImageURL: string;
-  button: boolean;
+  unlockPostId: string[];
 };
 
 export const POST = async (req: NextRequest) => {
@@ -20,7 +20,8 @@ export const POST = async (req: NextRequest) => {
     const requestBody: RequestBody = await req.json();
 
     // 分割代入
-    const { title, synopsis, content, coverImageURL, button } = requestBody;
+    const { title, synopsis, content, coverImageURL, unlockPostId } =
+      requestBody;
 
     // 投稿記事テーブルにレコードを追加
     const post: Post = await prisma.post.create({
@@ -29,6 +30,7 @@ export const POST = async (req: NextRequest) => {
         synopsis,
         content,
         coverImageURL,
+        unlockPostId,
       },
     });
 

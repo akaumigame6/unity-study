@@ -10,15 +10,30 @@ import Link from "next/link";
 
 type Props = {
   post: Post;
+  posts: Post[];
   button: Button;
 };
 
 const PostSummary: React.FC<Props> = (props) => {
-  const { post, button } = props;
+  const { post, posts, button } = props;
   const dtFmt = "YYYY-MM-DD HH:mm";
   const safeHTML = DOMPurify.sanitize(post.content, {
     ALLOWED_TAGS: ["b", "strong", "i", "em", "u", "br"],
   });
+  console.log("Post object:", post);
+  console.log("Posts object:", posts);
+
+  // unlockPostId が未定義でないか確認し、空の配列をデフォルト値とする
+  const unlockPostIds = post.unlockPostId || [];
+
+  // unlockPostId を使って posts から対応するタイトルを取得
+  const unlockTitles = unlockPostIds
+    .map((unlockId) => {
+      const unlockedPost = posts.find((p) => p.id === unlockId);
+      return unlockedPost ? unlockedPost.title : null; // 見つからない場合は null
+    })
+    .filter(Boolean); // null をフィルタリング
+
   return (
     <div className="border border-slate-400 p-3">
       <div className="flex items-center justify-between">
@@ -27,6 +42,14 @@ const PostSummary: React.FC<Props> = (props) => {
           {dayjs(post.createdAt).format(dtFmt)}
           <FontAwesomeIcon icon={faPen} className="ml-3" />
           {dayjs(post.createdAt).format(dtFmt)}
+          <span className="ml-3">
+            解放条件:
+            {
+              unlockPostIds.length == 0
+                ? "なし"
+                : unlockTitles.join(", ") + "のクリア" // タイトルをカンマ区切りで表示
+            }
+          </span>
         </div>
         <div className="flex space-x-1.5">
           {button.push ? (

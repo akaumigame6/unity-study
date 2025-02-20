@@ -24,10 +24,17 @@ model Post {
   coverImageURL  String
   createdAt      DateTime @default(now())
   updateAt       DateTime @updatedAt
+  unlockPostId   String[]
+}
+
+enum Role {
+  ADMIN
+  USER
 }
 
 model User {
-  id String @id @default(uuid())
+  id String @id
+  role Role @default(USER)
   name String
   password String
   button Button[]
@@ -37,6 +44,6 @@ model Button {
   id String @id @default(uuid())
   postId String
   userId String
-  push Boolean
+  push Boolean @default(true)
   user User @relation(fields: [userId], references: [id])
 }

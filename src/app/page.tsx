@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import type { Post } from "@/app/_types/Post";
+import type { PostApiResponse } from "@/app/_types/PostApiResponse";
 import type { Button } from "@prisma/client";
 import PostSummary from "@/app/_components/PostSummary";
 import dummyPosts from "@/app/_mocks/dummyPosts";
@@ -12,23 +13,82 @@ const Page: React.FC = () => {
   // 投稿データを「状態」として管理 (初期値はnull)
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [buttons, setButtons] = useState<Button[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   // コンポーネントが読み込まれたときに「1回だけ」実行する処理
   useEffect(() => {
-    // 本来はウェブAPIを叩いてデータを取得するが、まずはモックデータを使用
-    // (ネットからのデータ取得をシミュレートして１秒後にデータをセットする)
-    const timer = setTimeout(() => {
-      console.log("ウェブAPIからデータを取得しました (虚言)");
-      setPosts(dummyPosts);
-    }, 1000); // 1000ミリ秒 = 1秒
-    const timer2 = setTimeout(() => {
-      console.log("ウェブAPIからデータを取得しました (虚言)");
-      setButtons(dummyButton);
-    }, 1000); // 1000ミリ秒 = 1秒
-
-    // データ取得の途中でページ遷移したときにタイマーを解除する処理
-    return () => clearTimeout(timer);
+    const fetchButtons = async () => {
+      setIsLoading(true);
+      try {
+        const requestUrl = `/api/button/`;
+        const response = await fetch(requestUrl, {
+          method: "GET",
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error("データの取得に失敗しました");
+        }
+        const buttonApiResponse: Button[] = await response.json();
+        setButtons(
+          buttonApiResponse.map((rawButton) => ({
+            id: rawButton.id,
+            postId: rawButton.postId,
+            userId: rawButton.userId,
+            push: rawButton.push,
+          }))
+        );
+      } catch (e) {
+        setFetchError(
+          e instanceof Error ? e.message : "予期せぬエラーが発生しました"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      try {
+        const requestUrl = `/api/posts/`;
+        const response = await fetch(requestUrl, {
+          method: "GET",
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error("データの取得に失敗しました");
+        }
+        const postApiResponse: PostApiResponse[] = await response.json();
+        setPosts(
+          postApiResponse.map((rawPost) => ({
+            id: rawPost.id,
+            title: rawPost.title,
+            synopsis: rawPost.title,
+            content: rawPost.content,
+            coverImage: {
+              url: rawPost.coverImageURL,
+              width: 1000,
+              height: 1000,
+            },
+            createdAt: rawPost.createdAt,
+            updateAt: rawPost.updateAt,
+            unlockPostId: rawPost.unlockPostId,
+          }))
+        );
+      } catch (e) {
+        setFetchError(
+          e instanceof Error ? e.message : "予期せぬエラーが発生しました"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPosts();
+    fetchButtons();
   }, []);
+
+  if (fetchError) {
+    return <div>{fetchError}</div>;
+  }
 
   // 投稿データが取得できるまでは「Loading...」を表示
   if (!posts || !buttons) {
@@ -39,6 +99,8 @@ const Page: React.FC = () => {
       </div>
     );
   }
+
+  console.log("Post1 object:", posts);
 
   const findButtonById = (postId: string): Button | undefined => {
     return buttons.find((button) => button.postId === postId);
@@ -51,13 +113,13 @@ const Page: React.FC = () => {
       <div className="space-y-3">
         {posts.map((post) => {
           const button = findButtonById(post.id);
-
           // buttonがundefinedの場合、何らかのエラーハンドリングやデフォルト値を設定する
           if (button) {
             return (
               <PostSummary
                 key={post.id}
                 post={post}
+                posts={posts}
                 button={button} // ここでbuttonがundefinedでないことが保証される
               />
             );

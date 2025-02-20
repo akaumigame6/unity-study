@@ -14,6 +14,7 @@ const dummyPosts: Post[] = [
       height: 768,
       width: 1365,
     },
+    unlockPostId: [],
   },
   {
     id: "24f932b8-231b-429b-b9dc-569f07ba16a7",
@@ -28,6 +29,7 @@ const dummyPosts: Post[] = [
       height: 768,
       width: 1365,
     },
+    unlockPostId: [],
   },
   {
     id: "36b7c693-4cce-4d73-afa3-acb54a404290",
@@ -42,6 +44,7 @@ const dummyPosts: Post[] = [
       height: 768,
       width: 1365,
     },
+    unlockPostId: ["24f932b8-231b-429b-b9dc-569f07ba16a7"],
   },
 ];
 

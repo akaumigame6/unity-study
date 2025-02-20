@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient(); // PrismaClientのインスタンス生成
 
@@ -16,6 +16,7 @@ const main = async () => {
       content: "投稿1の本文。<br/>投稿1の本文。投稿1の本文。",
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-red.jpg",
+      unlockPostId: [],
     },
   });
 
@@ -26,6 +27,7 @@ const main = async () => {
       content: "投稿2の本文。<br/>投稿2の本文。投稿2の本文。",
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-green.jpg",
+      unlockPostId: [p1.id],
     },
   });
 
@@ -35,6 +37,8 @@ const main = async () => {
   //Userデータの作成
   const u1 = await prisma.user.create({
     data: {
+      id: "e10b4313-3d4f-40ac-81b2-03374bfad0e6",
+      role: "ADMIN",
       name: "user1",
       password: "user1_p",
       button: {
@@ -47,6 +51,8 @@ const main = async () => {
   });
   const u2 = await prisma.user.create({
     data: {
+      id: "c96d0c06-bd86-4b32-94b6-4567f54c0740",
+      role: "USER",
       name: "user2",
       password: "user2_p",
       button: {

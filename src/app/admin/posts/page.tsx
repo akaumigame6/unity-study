@@ -43,7 +43,7 @@ const Page: React.FC = () => {
           },
           createdAt: rawPost.createdAt,
           updateAt: rawPost.updateAt,
-          button: rawPost.button,
+          unlockPostId: rawPost.unlockPostId,
         }))
       );
     } catch (e) {
@@ -51,7 +51,7 @@ const Page: React.FC = () => {
         e instanceof Error ? e.message : "予期せぬエラーが発生しました"
       );
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetchPosts();

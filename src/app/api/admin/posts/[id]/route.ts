@@ -14,7 +14,7 @@ type RequestBody = {
   synopsis: string;
   content: string;
   coverImageURL: string;
-  button: boolean;
+  unlockPostId: string[];
 };
 
 export const GET = async (req: NextRequest, routeParams: RouteParams) => {
@@ -34,6 +34,7 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
         coverImageURL: true,
         createdAt: true,
         updateAt: true,
+        unlockPostId: true,
       },
     });
 
@@ -69,7 +70,8 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
     const requestBody: RequestBody = await req.json();
 
     // 分割代入
-    const { title, synopsis, content, coverImageURL, button } = requestBody;
+    const { title, synopsis, content, coverImageURL, unlockPostId } =
+      requestBody;
 
     // 投稿記事テーブルにレコードを追加
     const post: Post = await prisma.post.update({
@@ -79,6 +81,7 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
         synopsis,
         content,
         coverImageURL,
+        unlockPostId,
       },
     });
 

@@ -15,6 +15,7 @@ export const GET = async (req: NextRequest) => {
         content: true,
         createdAt: true,
         updateAt: true,
+        unlockPostId: true,
       },
       orderBy: {
         createdAt: "desc",

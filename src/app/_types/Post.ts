@@ -8,4 +8,5 @@ export type Post = {
   createdAt: string;
   updateAt: string;
   coverImage: CoverImage;
+  unlockPostId: string[];
 };

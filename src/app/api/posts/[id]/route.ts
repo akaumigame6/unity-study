@@ -26,6 +26,7 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
         coverImageURL: true,
         createdAt: true,
         updateAt: true,
+        unlockPostId: true,
       },
     });
 

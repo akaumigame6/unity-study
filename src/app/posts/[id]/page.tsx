@@ -45,6 +45,7 @@ const Page: React.FC = () => {
           },
           createdAt: postApiResponse.createdAt,
           updateAt: postApiResponse.updateAt,
+          unlockPostId: postApiResponse.unlockPostId,
         });
       } catch (e) {
         setFetchError(

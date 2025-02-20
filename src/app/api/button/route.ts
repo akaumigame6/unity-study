@@ -6,9 +6,10 @@ export const revalidate = 0; // ◀ サーバサイドのキャッシュを無�
 export const GET = async (req: NextRequest) => {
   try {
     const buttons = await prisma.button.findMany({
-      // ◀ 推論を利用して posts の型を決定
       select: {
         id: true,
+        postId: true,
+        userId: true,
         push: true,
       },
     });

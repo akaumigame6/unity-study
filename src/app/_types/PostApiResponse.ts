@@ -6,5 +6,5 @@ export type PostApiResponse = {
   coverImageURL: string;
   createdAt: string;
   updateAt: string;
-  button: boolean;
+  unlockPostId: string[];
 };
