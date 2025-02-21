@@ -21,7 +21,7 @@ const Page: React.FC = () => {
     const fetchButtons = async () => {
       setIsLoading(true);
       try {
-        const requestUrl = `/api/button/`;
+        const requestUrl = `/api/button`;
         const response = await fetch(requestUrl, {
           method: "GET",
           cache: "no-store",
@@ -30,8 +30,11 @@ const Page: React.FC = () => {
           throw new Error("データの取得に失敗しました");
         }
         const buttonApiResponse: Button[] = await response.json();
+        const button_before = buttonApiResponse.filter(
+          (data) => data.userId === "c96d0c06-bd86-4b32-94b6-4567f54c0740"
+        );
         setButtons(
-          buttonApiResponse.map((rawButton) => ({
+          button_before.map((rawButton) => ({
             id: rawButton.id,
             postId: rawButton.postId,
             userId: rawButton.userId,
@@ -101,6 +104,7 @@ const Page: React.FC = () => {
   }
 
   console.log("Post1 object:", posts);
+  console.log("Button1 object:", buttons);
 
   const findButtonById = (postId: string): Button | undefined => {
     return buttons.find((button) => button.postId === postId);
@@ -121,6 +125,7 @@ const Page: React.FC = () => {
                 post={post}
                 posts={posts}
                 button={button} // ここでbuttonがundefinedでないことが保証される
+                buttons={buttons}
               />
             );
           }

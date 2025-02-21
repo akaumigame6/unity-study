@@ -16,8 +16,9 @@ export const GET = async (req: NextRequest) => {
     return NextResponse.json(buttons);
   } catch (error) {
     console.error(error);
+    console.error("Error details:", error);
     return NextResponse.json(
-      { error: "投稿記事の一覧の取得に失敗しました" },
+      { error: "投稿記事の学習情報の取得に失敗しました" },
       { status: 500 }
     );
   }
