@@ -43,7 +43,7 @@ const PostSummary: React.FC<Props> = (props) => {
 
   if (post.unlockPostId && !UnlockCheck(buttons, post.unlockPostId)) {
     return (
-      <div className="border border-slate-400 p-3 bg-slate-200">
+      <div className="border border-slate-400 bg-slate-200 p-3">
         <div className="flex items-center justify-between">
           <div>
             <FontAwesomeIcon icon={faClock} className="mr-1" />

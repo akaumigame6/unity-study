@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useAuth } from "@/app/_hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
@@ -15,6 +16,7 @@ const Page: React.FC = () => {
   const [loginError, setLoginError] = useState("");
 
   const router = useRouter();
+  const { token } = useAuth();
 
   const updateEmailField = (value: string) => {
     setEmail(value);
@@ -45,7 +47,19 @@ const Page: React.FC = () => {
         return;
       }
       console.log("ログイン処理に成功しました。");
-      router.replace("/admin");
+
+      const response = await fetch("/api/user/authUser", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      console.log(data); // 取得したユーザー情報を表示
+
+      // router.replace("/posts");
     } catch (error) {
       setLoginError("ログイン処理中に予期せぬエラーが発生しました。");
       console.error(JSON.stringify(error, null, 2));
