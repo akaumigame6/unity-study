@@ -15,6 +15,11 @@ type RequestBody = {
   content: string;
   coverImageURL: string;
   unlockPostId: string[];
+  userrole: string;
+};
+
+type DeleteBody = {
+  userrole: string;
 };
 
 export const GET = async (req: NextRequest, routeParams: RouteParams) => {
@@ -70,22 +75,24 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
     const requestBody: RequestBody = await req.json();
 
     // 分割代入
-    const { title, synopsis, content, coverImageURL, unlockPostId } =
+    const { title, synopsis, content, coverImageURL, unlockPostId, userrole } =
       requestBody;
 
     // 投稿記事テーブルにレコードを追加
-    const post: Post = await prisma.post.update({
-      where: { id },
-      data: {
-        title, // title: title の省略形であることに注意。以下も同様
-        synopsis,
-        content,
-        coverImageURL,
-        unlockPostId,
-      },
-    });
+    if (userrole) {
+      const post: Post = await prisma.post.update({
+        where: { id },
+        data: {
+          title, // title: title の省略形であることに注意。以下も同様
+          synopsis,
+          content,
+          coverImageURL,
+          unlockPostId,
+        },
+      });
 
-    return NextResponse.json(post);
+      return NextResponse.json(post);
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -99,14 +106,20 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
 export const DELETE = async (req: NextRequest, routeParams: RouteParams) => {
   const token = req.headers.get("Authorization") ?? "";
   const { data, error } = await supabase.auth.getUser(token);
+  const requestBody: DeleteBody = await req.json();
+
+  // 分割代入
+  const { userrole } = requestBody;
   if (error)
     return NextResponse.json({ error: error.message }, { status: 401 });
   try {
     const id = routeParams.params.id;
-    const post: Post = await prisma.post.delete({
-      where: { id },
-    });
-    return NextResponse.json({ msg: `「${post.title}」を削除しました。` });
+    if (userrole) {
+      const post: Post = await prisma.post.delete({
+        where: { id },
+      });
+      return NextResponse.json({ msg: `「${post.title}」を削除しました。` });
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json(

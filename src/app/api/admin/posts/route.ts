@@ -9,6 +9,7 @@ type RequestBody = {
   content: string;
   coverImageURL: string;
   unlockPostId: string[];
+  userRole: string;
 };
 
 export const POST = async (req: NextRequest) => {
@@ -20,21 +21,22 @@ export const POST = async (req: NextRequest) => {
     const requestBody: RequestBody = await req.json();
 
     // 分割代入
-    const { title, synopsis, content, coverImageURL, unlockPostId } =
+    const { title, synopsis, content, coverImageURL, unlockPostId, userRole } =
       requestBody;
 
     // 投稿記事テーブルにレコードを追加
-    const post: Post = await prisma.post.create({
-      data: {
-        title, // title: title の省略形であることに注意。以下も同様
-        synopsis,
-        content,
-        coverImageURL,
-        unlockPostId,
-      },
-    });
-
-    return NextResponse.json(post);
+    if (userRole === "ADMIN") {
+      const post: Post = await prisma.post.create({
+        data: {
+          title, // title: title の省略形であることに注意。以下も同様
+          synopsis,
+          content,
+          coverImageURL,
+          unlockPostId,
+        },
+      });
+      return NextResponse.json(post);
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json(

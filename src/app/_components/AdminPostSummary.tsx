@@ -29,9 +29,13 @@ const AdminPostSummary: React.FC<Props> = (props) => {
     try {
       props.setIsSubmitting(true);
       const requestUrl = `/api/admin/posts/${post.id}`;
+      const requestBody = {
+        userrole: "ADMIN",
+      };
       const res = await fetch(requestUrl, {
         method: "DELETE",
         cache: "no-store",
+        body: JSON.stringify(requestBody),
       });
 
       if (!res.ok) {

@@ -57,6 +57,7 @@ const Page: React.FC = () => {
         synopsis: newSynposis,
         content: newContent,
         coverImageURL: newCoverImageURL,
+        userrole: "ADMIN",
       };
       const requestUrl = "/api/admin/posts";
       console.log(`${requestUrl} => ${JSON.stringify(requestBody, null, 2)}`);

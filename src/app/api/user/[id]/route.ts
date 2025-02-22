@@ -20,6 +20,7 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
       where: { id },
       select: {
         id: true,
+        role: true,
         name: true,
         password: true,
         button: true,
