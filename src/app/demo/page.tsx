@@ -2,12 +2,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/app/_hooks/useAuth";
 import { useRouter } from "next/navigation";
-import type { Post } from "@/app/_types/Post";
-import type { PostApiResponse } from "@/app/_types/PostApiResponse";
 import type { Button, User } from "@prisma/client";
 import PostSummary from "@/app/_components/PostSummary";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { Unity, useUnityContext } from "react-unity-webgl";
 
 const Page: React.FC = () => {
   // 投稿データを「状態」として管理 (初期値はnull)
@@ -19,6 +18,13 @@ const Page: React.FC = () => {
 
   const { token } = useAuth();
   const router = useRouter();
+
+  const { unityProvider, isLoaded, sendMessage } = useUnityContext({
+    loaderUrl: "Build/TEST_GAME.loader.js",
+    dataUrl: "Build/TEST_GAME.data",
+    frameworkUrl: "Build/TEST_GAME.framework.js",
+    codeUrl: "Build/TEST_GAME.wasm",
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -38,8 +44,7 @@ const Page: React.FC = () => {
           });
 
           if (response.status === 401) {
-            setIsAuthenticated(false); // 認証失敗
-            throw new Error("未認証です。");
+            // setIsAuthenticated(false); // 認証失敗
           } else if (!response.ok) {
             throw new Error("データの取得に失敗しました");
           }
@@ -126,8 +131,8 @@ const Page: React.FC = () => {
     return <div>{fetchError}</div>;
   }
 
-  // 投稿データが取得できるまでは「Loading...」を表示
-  if (!buttons) {
+  //   投稿データが取得できるまでは「Loading...」を表示
+  if (!buttons || !user) {
     return (
       <div className="text-gray-500">
         <FontAwesomeIcon icon={faSpinner} className="mr-1 animate-spin" />
@@ -141,11 +146,32 @@ const Page: React.FC = () => {
     return buttons.find((button) => button.postId === postId);
   };
 
-  // 投稿データが取得できたら「投稿記事の一覧」を出力
+  const SpawnPlayer = () => {
+    // isLoaded が true の場合、Unityインスタンスが完全に読み込まれていると確認
+    if (isLoaded) {
+      if (buttons) {
+        buttons.forEach((button) => {
+          if (button.push) {
+            // ここで条件を追加する場合
+            // ボタンが必要な条件を満たしている場合にメッセージを送信
+            sendMessage("GameMn", "SpawnPlayer");
+          }
+        });
+      }
+    }
+  };
+
+  // データが取得できたら「GAME」を出力
   return (
     <main>
       <div className="mb-2 text-2xl font-bold">DEMO</div>
       <div className="space-y-3">Unityのゲーム画面</div>
+      <Unity
+        unityProvider={unityProvider}
+        style={{ width: 400, height: 300 }}
+      />
+
+      <button onClick={SpawnPlayer}>学習結果適応</button>
     </main>
   );
 };

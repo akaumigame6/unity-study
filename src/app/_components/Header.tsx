@@ -31,12 +31,17 @@ const Header: React.FC = () => {
             </Link>
           </div>
           <div className="flex items-center space-x-6">
-            <div>
-              <Link href="/demo">
-                <FontAwesomeIcon icon={faGamepad} className="mr-1" />
-                DEMO
-              </Link>
-            </div>
+            {!isLoading &&
+              (session ? (
+                <div>
+                  <Link href="/demo">
+                    <FontAwesomeIcon icon={faGamepad} className="mr-1" />
+                    DEMO
+                  </Link>
+                </div>
+              ) : (
+                <div></div>
+              ))}
             <div>
               <FontAwesomeIcon icon={faUser} className="mr-1" />
               {!isLoading &&
