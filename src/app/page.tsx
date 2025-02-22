@@ -6,8 +6,6 @@ import { useAuth } from "@/app/_hooks/useAuth";
 
 // WelcomePageコンポーネント
 const Page: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [userName, setUserName] = useState<string>("");
   const { isLoading, session } = useAuth();
 
   const router = useRouter();
