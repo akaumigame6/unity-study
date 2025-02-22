@@ -59,7 +59,7 @@ const Page: React.FC = () => {
       const data = await response.json();
       console.log(data); // 取得したユーザー情報を表示
 
-      // router.replace("/posts");
+      router.replace("/posts");
     } catch (error) {
       setLoginError("ログイン処理中に予期せぬエラーが発生しました。");
       console.error(JSON.stringify(error, null, 2));

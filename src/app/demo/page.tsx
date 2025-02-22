@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/app/_hooks/useAuth";
 import { useRouter } from "next/navigation";
 import type { Button, User } from "@prisma/client";
-import PostSummary from "@/app/_components/PostSummary";
+import { twMerge } from "tailwind-merge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Unity, useUnityContext } from "react-unity-webgl";
@@ -15,11 +15,12 @@ const Page: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false); // 認証されたかどうかのフラグ
+  const [isUnload, setUnload] = useState(false); // 認証されたかどうかのフラグ
 
   const { token } = useAuth();
   const router = useRouter();
 
-  const { unityProvider, isLoaded, sendMessage } = useUnityContext({
+  const { unityProvider, isLoaded, unload, sendMessage } = useUnityContext({
     loaderUrl: "Build/TEST_GAME.loader.js",
     dataUrl: "Build/TEST_GAME.data",
     frameworkUrl: "Build/TEST_GAME.framework.js",
@@ -149,6 +150,7 @@ const Page: React.FC = () => {
   const SpawnPlayer = () => {
     // isLoaded が true の場合、Unityインスタンスが完全に読み込まれていると確認
     if (isLoaded) {
+      sendMessage("GameMn", "ClearObjects");
       if (buttons) {
         buttons.forEach((button) => {
           if (button.push) {
@@ -161,6 +163,10 @@ const Page: React.FC = () => {
     }
   };
 
+  const Unityunload = () => {
+    setUnload(true);
+    unload();
+  };
   // データが取得できたら「GAME」を出力
   return (
     <main>
@@ -170,8 +176,30 @@ const Page: React.FC = () => {
         unityProvider={unityProvider}
         style={{ width: 400, height: 300 }}
       />
-
-      <button onClick={SpawnPlayer}>学習結果適応</button>
+      <div className={twMerge("my-1")}>
+        <button
+          onClick={SpawnPlayer}
+          className={twMerge(
+            "rounded-md px-4 py-1 font-bold",
+            "bg-black text-white hover:bg-slate-700"
+          )}
+        >
+          学習結果適応
+        </button>
+        {!isUnload ? (
+          <button
+            onClick={Unityunload}
+            className={twMerge(
+              "mx-2 rounded-md px-4 py-1 font-bold",
+              "bg-black text-white hover:bg-slate-700"
+            )}
+          >
+            Unityを終了させる
+          </button>
+        ) : (
+          <div>他のページに移動可能です。</div>
+        )}
+      </div>
     </main>
   );
 };

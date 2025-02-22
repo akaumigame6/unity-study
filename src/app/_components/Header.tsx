@@ -46,7 +46,7 @@ const Header: React.FC = () => {
               <FontAwesomeIcon icon={faUser} className="mr-1" />
               {!isLoading &&
                 (session ? (
-                  <Link href="/user">User</Link>
+                  <button onClick={logout}>Logout</button>
                 ) : (
                   <Link href="/login">Login</Link>
                 ))}
