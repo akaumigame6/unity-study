@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/utils/supabase"; // Supabaseクライアントのインポート
 
-export const getAuthUser = async (req: NextRequest) => {
+const getAuthUser = async (req: NextRequest) => {
   const token = req.headers.get("Authorization")?.split(" ")[1]; // Bearerトークンを取得
   if (!token) {
     throw new Error("Authorization token not found");
@@ -13,7 +13,7 @@ export const getAuthUser = async (req: NextRequest) => {
     throw new Error("Failed to fetch user data");
   }
 
-  return data.user; // 認証済みユーザー情報を返す
+  return NextResponse.json(data.user); // 認証済みユーザー情報を返す
 };
 
 // APIハンドラーの例
