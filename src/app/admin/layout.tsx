@@ -80,11 +80,11 @@ const AdminLayout = ({ children }: Props) => {
     // 認証確認後、未認証であればログインページにリダイレクト
     if (session === null) {
       console.log("未認証");
-      router.replace("/login");
+      router.replace("/Posts");
     }
     if (user && user.role !== "ADMIN") {
       console.log("ADMINじゃない");
-      router.replace("/login");
+      router.replace("/Posts");
     }
   }, [isLoading, router, session, user]);
 
