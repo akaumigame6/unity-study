@@ -12,8 +12,8 @@ Unity-Studyは機能を実装し、それがどのような結果になるのか
 ## アプリの使用方法
 
 **Welcome Page**
-![非ログイン時のWelcomePage画面](/public/imges/welcomepage_gest.png)
-![ログイン時のWelcomePage画面](/public/imges/welcomepage_user.png)
+![非ログイン時のWelcomePage画面](/public/images/welcomepage_gest.png)
+![ログイン時のWelcomePage画面](/public/images/welcomepage_user.png)
 
 - 非ログイン時は中央のボタンがLoginページに飛ぶようになっています。
 - ログイン時は中央のボタンがPostsページに飛ぶようになっています。
@@ -21,26 +21,26 @@ Unity-Studyは機能を実装し、それがどのような結果になるのか
 - ログイン中にLogoutを押すとログアウト出来ます。
 
 **Login**
-![Login画面](/public/imges/login.png)
+![Login画面](/public/images/login.png)
 
 - ログインページです。ここからe-mailとpasswordを入力することでログインすることが出来ます。
   テストユーザーはemail:user@test1.com wassword:test　になります。
 
 **Posts**
-![Posts画面](/public/imges/posts.png)
+![Posts画面](/public/images/posts.png)
 
 - 学習ページに飛べます。
 - 学習が完了か未完了かも確認できます(緑:完了　赤:未完了)
 
 **学習ページ**
-![学習ページ画面](/public/imges/学習ページ.png)
+![学習ページ画面](/public/images/学習ページ.png)
 
 - Unityについて学べる記事がみれます（誠意製作中）
 - 下部のボタンを押すことで学習上状況を完了、未完了切り替えることが出来ます。
 
 **DEMO**
-![DEMO画面(Unity起動時)](/public/imges/DEMO1.png)
-![DEMO画面(Unity非起動時)](/public/imges/DEMO2.png)
+![DEMO画面(Unity起動時)](/public/images/DEMO1.png)
+![DEMO画面(Unity非起動時)](/public/images/DEMO2.png)
 
 - 実際にWebGLを動かすことが出来ます。
 - 学習状況適応を押すと学習状況が適応したものになります。（現在は学習完了の数だけplayerが増えるようになっています）
