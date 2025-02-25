@@ -176,6 +176,7 @@ const Page: React.FC = () => {
         unityProvider={unityProvider}
         style={{ width: 400, height: 300 }}
       />
+      <div>ページを離れる際はUnityを終了させてから離れてください。</div>
       <div className={twMerge("my-1")}>
         <button
           onClick={SpawnPlayer}

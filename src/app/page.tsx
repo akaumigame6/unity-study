@@ -14,6 +14,7 @@ const Page: React.FC = () => {
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1 className="">実際に機能を体験しながらUnityを学ぼう!!</h1>
       <h1 className="py-1 text-5xl">Uinty-Study-Notes</h1>
+      <div>ログインしているのにエラーが起きた場合はリロードしてください。</div>
       {!isLoading &&
         (session ? (
           <div>
