@@ -17,7 +17,7 @@ datasource db {
 
 // 投稿記事テーブル
 model Post {
-  id             String @id @default(uuid())
+  id             String   @id @default(uuid())
   title          String
   synopsis       String
   content        String
@@ -25,6 +25,7 @@ model Post {
   createdAt      DateTime @default(now())
   updateAt       DateTime @updatedAt
   unlockPostId   String[]
+  buttons        Button[]
 }
 
 enum Role {
@@ -33,17 +34,19 @@ enum Role {
 }
 
 model User {
-  id String @id
-  role Role @default(USER)
-  name String
-  password String
-  button Button[]
+  id     String   @id
+  role   Role     @default(USER)
+  name   String
+  buttons Button[]
 }
 
 model Button {
-  id String @id @default(uuid())
-  postId String
-  userId String
-  push Boolean @default(true)
-  user User @relation(fields: [userId], references: [id])
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }

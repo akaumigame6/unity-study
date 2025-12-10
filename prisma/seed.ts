@@ -35,30 +35,15 @@ const main = async () => {
   console.log(JSON.stringify(p2, null, 2));
 
   //Userデータの作成
-  const u1 = await prisma.user.create({
+  const test_user = await prisma.user.create({
     data: {
-      id: "e10b4313-3d4f-40ac-81b2-03374bfad0e6",
-      role: "ADMIN",
-      name: "user1",
-      password: "user1_p",
-      button: {
-        create: [
-          { postId: p1.id, push: false },
-          { postId: p2.id, push: false },
-        ],
-      },
-    },
-  });
-  const u2 = await prisma.user.create({
-    data: {
-      id: "c96d0c06-bd86-4b32-94b6-4567f54c0740",
+      id: "eb8edc15-074c-47e2-bac3-ec30c0196f5e",
       role: "USER",
-      name: "user2",
-      password: "user2_p",
-      button: {
+      name: "user1",
+      buttons: {
         create: [
-          { postId: p1.id, push: false },
-          { postId: p2.id, push: false },
+          { postId: p1.id, completed: false },
+          { postId: p2.id, completed: false },
         ],
       },
     },
