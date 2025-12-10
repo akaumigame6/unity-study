@@ -4,7 +4,8 @@ import { useAuth } from "@/app/_hooks/useAuth";
 import { useRouter } from "next/navigation";
 import type { Post } from "@/app/_types/Post";
 import type { PostApiResponse } from "@/app/_types/PostApiResponse";
-import type { Button, User } from "@prisma/client";
+import type { Button } from "@/app/_types/Button";
+import type { User } from "@prisma/client";
 import PostSummary from "@/app/_components/PostSummary";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -111,7 +112,6 @@ const Page: React.FC = () => {
             id: userRes.id,
             name: userRes.name,
             role: userRes.role,
-            password: userRes.password,
           });
         } catch (e) {
           setFetchError(
@@ -150,7 +150,7 @@ const Page: React.FC = () => {
               id: rawButton.id,
               postId: rawButton.postId,
               userId: rawButton.userId,
-              push: rawButton.push,
+              completed: rawButton.completed,
             }))
           );
         } catch (e) {
