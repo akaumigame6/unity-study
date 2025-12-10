@@ -61,7 +61,6 @@ const AdminLayout = ({ children }: Props) => {
             id: userRes.id,
             name: userRes.name,
             role: userRes.role,
-            password: userRes.password,
           });
         } catch (e) {
         } finally {

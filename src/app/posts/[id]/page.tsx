@@ -7,7 +7,8 @@ import type { PostApiResponse } from "@/app/_types/PostApiResponse";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
-import type { Button, User } from "@prisma/client";
+import type { Button } from "@/app/_types/Button";
+import type { User } from "@prisma/client";
 import { twMerge } from "tailwind-merge";
 import { useRouter } from "next/navigation";
 
@@ -116,7 +117,6 @@ const Page: React.FC = () => {
             id: userRes.id,
             name: userRes.name,
             role: userRes.role,
-            password: userRes.password,
           });
         } catch (e) {
           setFetchError(
@@ -210,7 +210,7 @@ const Page: React.FC = () => {
         id: button.id,
         postId: button.postId,
         userId: button.userId,
-        push: !button.push,
+        completed: !button.completed,
       };
       const requestUrl = `/api/button/${button.id}`;
       console.log(`${requestUrl} => ${JSON.stringify(requestBody, null, 2)}`);
@@ -226,7 +226,8 @@ const Page: React.FC = () => {
       if (!res.ok) {
         throw new Error(`${res.status}: ${res.statusText}`); // -> catch節に移動
       }
-      router.replace("/posts");
+      const updatedButton: Button = await res.json();
+      setButton(updatedButton);
     } catch (error) {
       const errorMsg =
         error instanceof Error
@@ -252,7 +253,7 @@ const Page: React.FC = () => {
           />
         </div>
         <div dangerouslySetInnerHTML={{ __html: safeHTML }} />
-        {button.push ? (
+        {button.completed ? (
           <button
             onClick={ButonPUT}
             className={twMerge(

@@ -37,7 +37,9 @@ const PostSummary: React.FC<Props> = (props) => {
 
   const UnlockCheck = (buttons: Button[], postIds: string[]): boolean => {
     return postIds.every((postId) =>
-      buttons.some((button) => button.postId === postId && button.push === true)
+      buttons.some(
+        (button) => button.postId === postId && button.completed === true
+      )
     );
   };
 
@@ -60,7 +62,7 @@ const PostSummary: React.FC<Props> = (props) => {
             </span>
           </div>
           <div className="flex space-x-1.5">
-            {button.push ? (
+            {button.completed ? (
               <div
                 className={twMerge(
                   "rounded-md px-2 py-0.5",
@@ -112,7 +114,7 @@ const PostSummary: React.FC<Props> = (props) => {
             </span>
           </div>
           <div className="flex space-x-1.5">
-            {button.push ? (
+            {button.completed ? (
               <div
                 className={twMerge(
                   "rounded-md px-2 py-0.5",

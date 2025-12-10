@@ -10,7 +10,7 @@ type RouteParams = {
 };
 
 type RequestBody = {
-  push: boolean;
+  completed?: boolean;
 };
 
 export const revalidate = 0; // ◀ サーバサイドのキャッシュを無効化する設定
@@ -26,7 +26,7 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
       where: { id },
       select: {
         id: true,
-        push: true,
+        completed: true,
       },
     });
 
@@ -51,16 +51,37 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
 export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
   try {
     const id = routeParams.params.id;
-    const requestBody: RequestBody = await req.json();
+    const requestBody: RequestBody = await req
+      .json()
+      .catch(() => ({}) as RequestBody);
 
-    // 分割代入
-    const { push } = requestBody;
+    const requestedCompleted =
+      typeof requestBody.completed === "boolean"
+        ? requestBody.completed
+        : undefined;
 
-    // 投稿記事テーブルにレコードを追加
+    // リクエストでcompletedが指定されない場合は現在の値を反転してトグル
+    let nextCompleted = requestedCompleted;
+    if (nextCompleted === undefined) {
+      const current = await prisma.button.findUnique({
+        where: { id },
+        select: { completed: true },
+      });
+
+      if (!current) {
+        return NextResponse.json(
+          { error: `id='${id}'の学習記録は見つかりませんでした` },
+          { status: 404 }
+        );
+      }
+
+      nextCompleted = !current.completed;
+    }
+
     const button: Button = await prisma.button.update({
       where: { id },
       data: {
-        push,
+        completed: nextCompleted,
       },
     });
 

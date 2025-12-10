@@ -10,7 +10,7 @@ export const GET = async (req: NextRequest) => {
         id: true,
         postId: true,
         userId: true,
-        push: true,
+        completed: true,
       },
     });
     return NextResponse.json(buttons);
