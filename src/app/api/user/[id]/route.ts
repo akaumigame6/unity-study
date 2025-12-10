@@ -22,7 +22,6 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
         id: true,
         role: true,
         name: true,
-        buttons: true,
       },
     });
 
